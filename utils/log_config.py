@@ -39,7 +39,7 @@ log_config = {
         },
         "rotating_file": {  
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "INFO",
+            "level": "DEBUG",
             "formatter": "json",
             "filename": "fastapi.log",
             "maxBytes": 10485760,  # 10 MB

@@ -19,10 +19,10 @@ app = FastAPI()
 @app.get("/")
 async def root() -> dict:
     # df = read_daily_ohlc_from_s3(ticker="A")
-    ticker="MSFT"
+    ticker="NFLX"
     # df = yf.Ticker(ticker=ticker).history(period='max', interval='1d')
-    msg = f"This is info message with {ticker=}"
-    logger.info(msg)
+    msg = f"This is debug message with {ticker=}"
+    logger.debug(msg)
     return {"message": "Hello World 11", 
         "S3_BUCKET": S3_BUCKET,
         "S3_FOLDER_DAILY_DATA": S3_FOLDER_DAILY_DATA,
