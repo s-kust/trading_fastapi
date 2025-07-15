@@ -27,6 +27,10 @@ async def root() -> dict:
         print("After calling app_logger.error")
         raise e
     # df = yf.Ticker(ticker=ticker).history(period='max', interval='1d')
+    if df is None:
+        print("Before calling app_logger.error 2")
+        app_logger.error("Empty DF")
+        print("After calling app_logger.error 2")
     msg = f"This is debug message with {ticker=}"
     app_logger.debug(msg)
     return {
