@@ -4,9 +4,11 @@ from typing import List, Optional, Set
 import boto3
 import pandas as pd
 from botocore.exceptions import ClientError
+from dotenv import load_dotenv
 
 from constants import S3_BUCKET, S3_FOLDER_DAILY_DATA
 
+load_dotenv()
 s3_client = boto3.client(service_name="s3")
 
 
