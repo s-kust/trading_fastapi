@@ -86,7 +86,7 @@ def write_df_to_s3_csv(
     filename: str,
     bucket: str = S3_BUCKET,
     folder: str = S3_FOLDER_DAILY_DATA,
-) -> None:
+) -> str:
 
     if not "/" in filename:
         _check_s3_call_inputs(
@@ -108,9 +108,9 @@ def write_df_to_s3_csv(
         )
         status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
         if status == 200:
-            print(f"Writing to S3 {S3_BUCKET}/{folder_filename} - OK")
+            return f"Writing to S3 {S3_BUCKET}/{folder_filename} - OK"
         else:
-            print(
+            return (
                 f"Writing to S3 {S3_BUCKET}/{folder_filename} FAILED, status - {status}"
             )
 

@@ -38,7 +38,7 @@ log_config = {
             "level": "DEBUG",
             "formatter": "json",
             "filename": "fastapi.log",
-            "maxBytes": 10485760,  # 10 MB
+            "maxBytes": 2097152,  # 2 MB
             "backupCount": 3,
         },
     },
