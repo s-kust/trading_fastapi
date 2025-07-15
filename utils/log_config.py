@@ -5,14 +5,14 @@ from datetime import datetime
 
 # Custom JSON formatter
 class JsonFormatter(logging.Formatter):
-    def format(self, record) -> str:
+    def format(self, record: logging.LogRecord) -> str:
         log_record = {
             "timestamp": datetime.utcnow().isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "module": record.module,
             "line": record.lineno,
-            "message": record.getMessage()
+            "message": record.getMessage(),
         }
 
         # Add exception info if available
@@ -21,15 +21,12 @@ class JsonFormatter(logging.Formatter):
 
         return json.dumps(log_record)
 
+
 # Define the logging configuration
 log_config = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": JsonFormatter
-        }
-    },
+    "formatters": {"json": {"()": JsonFormatter}},
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
@@ -37,7 +34,7 @@ log_config = {
             "formatter": "json",
             "stream": "ext://sys.stdout",
         },
-        "rotating_file": {  
+        "rotating_file": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "json",
@@ -46,10 +43,12 @@ log_config = {
             "backupCount": 3,
         },
     },
-        
     "loggers": {
-        "app": {"handlers": ["console", "rotating_file"], "level": "DEBUG", "propagate": False},
+        "app": {
+            "handlers": ["console", "rotating_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
     },
-    "root": {"handlers": ["console"], "level": "DEBUG"},
+    "root": {"handlers": ["console", "rotating_file"], "level": "DEBUG"},
 }
-
