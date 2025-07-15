@@ -7,8 +7,7 @@ from fastapi import FastAPI
 
 from constants import S3_BUCKET, S3_FOLDER_DAILY_DATA
 from utils.log_config import log_config
-
-# from utils.s3 import read_daily_ohlc_from_s3
+from utils.s3 import read_daily_ohlc_from_s3
 
 dictConfig(log_config)
 logger = logging.getLogger("app")
@@ -18,8 +17,12 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    # df = read_daily_ohlc_from_s3(ticker="A")
     ticker="NFLX"
+    try:
+        df = read_daily_ohlc_from_s3(ticker=ticker)
+    except Exception as e:
+        logger.critical(e, exc_info=True)
+        raise e
     # df = yf.Ticker(ticker=ticker).history(period='max', interval='1d')
     msg = f"This is debug message with {ticker=}"
     logger.debug(msg)
