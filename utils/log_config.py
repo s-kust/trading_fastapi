@@ -6,11 +6,9 @@ from datetime import datetime
 # Custom JSON formatter
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        print(f"Inside format original levelname: {record.levelname}")
         log_record = {
             "timestamp": datetime.utcnow().isoformat(),
             "level": record.levelname,
-            "logger": record.name,
             "module": record.module,
             "line": record.lineno,
             "message": record.getMessage(),
