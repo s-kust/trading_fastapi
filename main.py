@@ -22,7 +22,9 @@ async def root() -> dict:
     try:
         df = read_daily_ohlc_from_s3(ticker=ticker)
     except Exception as e:
+        print("Before calling app_logger.error")
         app_logger.error(e, exc_info=True)
+        print("After calling app_logger.error")
         raise e
     # df = yf.Ticker(ticker=ticker).history(period='max', interval='1d')
     msg = f"This is debug message with {ticker=}"

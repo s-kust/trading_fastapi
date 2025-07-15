@@ -50,6 +50,6 @@ log_config = {
             "level": "DEBUG",
             "propagate": False,
         },
+        "root": {"handlers": ["console", "rotating_file"], "level": "DEBUG"},
     },
-    "root": {"handlers": ["console", "rotating_file"], "level": "DEBUG"},
 }
