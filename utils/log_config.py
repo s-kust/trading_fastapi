@@ -48,6 +48,7 @@ log_config = {
         "app": {
             "handlers": ["console", "rotating_file"],
             "propagate": False,
+            "level": "DEBUG",
         },
         "root": {"handlers": ["console", "rotating_file"]},
     },
