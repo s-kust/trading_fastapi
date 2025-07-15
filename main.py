@@ -21,10 +21,12 @@ async def root() -> dict:
     # df = read_daily_ohlc_from_s3(ticker="A")
     ticker="MSFT"
     # df = yf.Ticker(ticker=ticker).history(period='max', interval='1d')
-    logger.debug(f"This is a debug message with {ticker=}")
+    msg = f"This is info message with {ticker=}"
+    logger.info(msg)
     return {"message": "Hello World 11", 
         "S3_BUCKET": S3_BUCKET,
         "S3_FOLDER_DAILY_DATA": S3_FOLDER_DAILY_DATA,
+        "msg": msg
         # "df 1st": str(df.index[0]),
         # "df last": str(df.index[-1])
     }
