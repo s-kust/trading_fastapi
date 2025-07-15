@@ -18,5 +18,5 @@ async def root() -> dict:
         # "aws_access_key": aws_access_key,
         # "aws_secret_key": aws_secret_key,
         # "aws_region": aws_region,
-        "os_environ": os.environ
+        "os_environ": str(os.environ)
     }
