@@ -146,6 +146,8 @@ def read_df_from_s3_csv(
         res = pd.read_csv(response.get("Body"), index_col=0)
         res.index = pd.to_datetime(res.index, utc=True)
         res.index = res.index.normalize()
+        res.index = res.index.date  # type: ignore
+        res = res.sort_index()
         # res.index = res.index.tz_localize(None)
         # res.index = res.index.tz_convert(None)
         # res.index = pd.DatetimeIndex(res.index)
@@ -156,8 +158,7 @@ def read_df_from_s3_csv(
         # print("res")
         print(res)
         print()
-        # res.index = res.index.date  # type: ignore
-        res = res.sort_index()
+
         return res
     else:
         raise RuntimeError(
