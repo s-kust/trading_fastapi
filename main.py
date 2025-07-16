@@ -20,7 +20,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    ticker = "NFLX"
+    ticker = "TSLA"
 
     # try:
     #     df_yahoo_fin = import_yahoo_fin_daily(ticker=ticker)
@@ -31,14 +31,23 @@ async def root() -> dict:
     #     app_logger.error(e, exc_info=True)
     #     raise e
 
-    # try:
-    #     df_a_v = import_alpha_vantage_daily(ticker=ticker)
-    #     print("df_a_v")
-    #     print(df_a_v)
-    #     print()
-    # except Exception as e:
-    #     app_logger.error(e, exc_info=True)
-    #     raise e
+    try:
+        df_a_v = import_alpha_vantage_daily(ticker=ticker)
+        print("df_a_v")
+        print(df_a_v)
+        print()
+    except Exception as e:
+        app_logger.error(e, exc_info=True)
+        raise e
+
+    try:
+        s3_filename = f"{ticker}.csv"
+        s3_write_res = write_df_to_s3_csv(df=df_a_v, filename=s3_filename)
+        log_msg = f"write_df_to_s3_csv {s3_filename} - " + s3_write_res
+        app_logger.info(log_msg)
+    except Exception as e:
+        app_logger.error(e, exc_info=True)
+        raise e
 
     try:
         df = read_daily_ohlc_from_s3(ticker=ticker)
@@ -46,22 +55,11 @@ async def root() -> dict:
         app_logger.error(e, exc_info=True)
         raise e
 
-    try:
-        df = add_rsi_column(df=df, col_name="Close")
-    except Exception as e:
-        app_logger.error(e, exc_info=True)
-        raise e
-
-    try:
-        s3_filename = f"{ticker}.csv"
-        s3_write_res = write_df_to_s3_csv(
-            df=df, filename=s3_filename, folder="daily_OHLC_with_RSI/"
-        )
-        log_msg = f"write_df_to_s3_csv {s3_filename} - " + s3_write_res
-        app_logger.info(log_msg)
-    except Exception as e:
-        app_logger.error(e, exc_info=True)
-        raise e
+    # try:
+    #     df = add_rsi_column(df=df, col_name="Close")
+    # except Exception as e:
+    #     app_logger.error(e, exc_info=True)
+    #     raise e
 
     # df = yf.Ticker(ticker=ticker).history(period="max", interval="1d")
     # if df is None:
