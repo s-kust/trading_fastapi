@@ -145,10 +145,11 @@ def read_df_from_s3_csv(
     if status == 200:
         res = pd.read_csv(response.get("Body"), index_col=0)
         res.index = pd.to_datetime(res.index)
-        print("res")
-        print(res)
-        print()
-        # res.index = res.index.date  # type: ignore
+        res.index = res.index.tz_convert(None)
+        # print("res")
+        # print(res)
+        # print()
+        res.index = res.index.date  # type: ignore
         res = res.sort_index()
         return res
     else:
