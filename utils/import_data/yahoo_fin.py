@@ -1,0 +1,31 @@
+from functools import partial
+
+import pandas as pd
+import yfinance as yf
+
+
+def get_ohlc_from_yf(
+    ticker: str, period: str = "max", interval: str = "1d"
+) -> pd.DataFrame:
+    """
+    Get OHLC DataFrame with Volume from Yahoo Finance.
+    Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max.
+    Valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
+    """
+    res = yf.Ticker(ticker=ticker).history(period=period, interval=interval)
+
+    # NOTE  If period and interval mismatch, Yahoo Finance returns empty DataFrame.
+    # A mismatch is an interval too small for a long period.
+    if res.shape[0] == 0:
+        raise RuntimeError(
+            f"get_ohlc_from_yf: YFin returned empty Df for {ticker=},{period=}, {interval=}"
+        )
+
+    res.index = pd.to_datetime(res.index)
+    res.index = res.index.tz_convert(None)
+    res.index = res.index.date
+    res = res.sort_index()
+    return res[["Open", "High", "Low", "Close", "Volume"]]
+
+
+import_yahoo_fin_daily = partial(get_ohlc_from_yf, period="max", interval="1d")
