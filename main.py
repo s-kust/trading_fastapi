@@ -19,7 +19,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    ticker = "NFLX"
+    ticker = "TSLA"
 
     try:
         df_yahoo_fin = import_yahoo_fin_daily(ticker=ticker)

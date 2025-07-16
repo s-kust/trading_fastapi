@@ -80,4 +80,4 @@ def import_alpha_vantage_daily(ticker: str) -> pd.DataFrame:
     _check_imported_data(df=data_daily, ticker=ticker, data_type="Daily")
     for col in data_daily.columns:
         data_daily[col] = pd.to_numeric(data_daily[col])
-    return data_daily
+    return data_daily[["Open", "High", "Low", "Close", "Volume"]]
