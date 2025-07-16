@@ -153,7 +153,7 @@ def read_df_from_s3_csv(
         # print("res")
         # print(res)
         # print()
-        res.index = res.index.date  # type: ignore
+        # res.index = res.index.date  # type: ignore
         res = res.sort_index()
         return res
     else:
