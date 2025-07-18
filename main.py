@@ -24,11 +24,11 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    ticker = "NFLX"
+    ticker = "TSLA"
     df = add_fresh_ohlc_to_ticker_data(ticker=ticker)
 
     return {
-        "message": "Hello World RSI 2",
+        "message": f"Hello World RSI, {ticker=}",
         "S3_BUCKET": S3_BUCKET,
         "S3_FOLDER_DAILY_DATA": S3_FOLDER_DAILY_DATA,
         # "msg": msg,
