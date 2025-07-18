@@ -7,7 +7,7 @@ from constants import RSI_PERIOD
 
 def draw_save_candlestick_with_rsi(df: pd.DataFrame) -> None:
     # df_last_30_days = df.last("30D").copy()
-    df_last = df[df.index >= (df.index.max() - pd.Timedelta(days=59))].copy()
+    df_last = df[df.index >= (df.index.max() - pd.Timedelta(days=120))].copy()
     fig = make_subplots(
         rows=2,
         cols=1,
@@ -60,7 +60,10 @@ def draw_save_candlestick_with_rsi(df: pd.DataFrame) -> None:
 
     # Remove x-axis labels from the top subplot to avoid redundancy
     fig.update_xaxes(showticklabels=False, row=1, col=1)
-    fig.update_xaxes(title_text="Date", row=2, col=1)
+
+    last_date = str(df.index[-1])
+    last_rsi_value = str(df[-1][f"RSI_{RSI_PERIOD}"])
+    fig.update_xaxes(title_text=f"{last_date=}, {last_rsi_value=}", row=2, col=1)
 
     # Add rangebreaks to remove weekends (Saturday and Sunday)
     # 6 corresponds to Saturday, 7 to Sunday.
