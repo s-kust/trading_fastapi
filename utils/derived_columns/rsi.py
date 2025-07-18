@@ -1,3 +1,5 @@
+import logging
+from logging.config import dictConfig
 from typing import Callable
 
 import numpy as np
@@ -5,7 +7,11 @@ import pandas as pd
 
 from constants import RSI_PERIOD, S3_FOLDER_RSI
 from utils.import_data.misc import add_fresh_ohlc_to_main_data
+from utils.log_config import log_config
 from utils.s3 import read_daily_ohlc_from_s3, read_df_from_s3_csv, write_df_to_s3_csv
+
+dictConfig(log_config)
+app_logger = logging.getLogger("app")
 
 
 def _add_rsi_col_initial_validation(
@@ -100,7 +106,9 @@ def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
     rsi_df = rsi_df[rsi_df[f"RSI_{RSI_PERIOD}"].notnull()]
     res = add_fresh_ohlc_to_main_data(main_df=rsi_df, new_data=ohlc_df)
     first_rsi_nan_index_label = res["RSI_14"].isnull().idxmax()
+    print(f"{first_rsi_nan_index_label=}")
     first_rsi_nan_position = res.index.get_loc(first_rsi_nan_index_label)
+    print(f"{first_rsi_nan_position=}")
     start_index = max(0, first_rsi_nan_position - RSI_PERIOD)  # type: ignore
     filtered_df = res.iloc[start_index:]
     filtered_df = add_rsi_column(df=filtered_df, col_name="Close")
@@ -108,4 +116,13 @@ def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
     print(filtered_df)
     print()
     res = pd.concat([res[res.index < filtered_df.index.min()], filtered_df])  # type: ignore
+    try:
+        s3_write_res = write_df_to_s3_csv(
+            df=res, filename=filename, folder=S3_FOLDER_RSI
+        )
+        log_msg = f"write_df_to_s3_csv {filename} - " + s3_write_res
+        app_logger.info(log_msg)
+    except Exception as e:
+        app_logger.error(e, exc_info=True)
+        raise e
     return res
