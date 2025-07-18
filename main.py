@@ -35,10 +35,11 @@ async def root() -> dict:
     if df is not None and not df.empty:
         first_rsi_nan_index_label = df["RSI_14"].isnull().idxmax()
         first_rsi_nan_position = df.index.get_loc(first_rsi_nan_index_label)
-        start_index = max(0, first_rsi_nan_position - 14)
+        start_index = max(0, first_rsi_nan_position - 14)  # type: ignore
         print(f"{first_rsi_nan_index_label=}")
         print(f"{first_rsi_nan_position=}")
         print(f"{start_index=}")
+        print(df.iloc[start_index:])
 
     return {
         "message": f"Hello World RSI, {ticker=}",
