@@ -6,7 +6,8 @@ from constants import RSI_PERIOD
 
 
 def draw_save_candlestick_with_rsi(df: pd.DataFrame) -> None:
-    df_last_30_days = df.last("30D").copy()
+    # df_last_30_days = df.last("30D").copy()
+    df_last_30_days = df[df.index >= (df.index.max() - pd.Timedelta(days=29))].copy()
     fig = make_subplots(
         rows=2,
         cols=1,
