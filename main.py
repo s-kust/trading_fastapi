@@ -33,9 +33,11 @@ async def root() -> dict:
     filename = f"{ticker.upper()}.csv"
     df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
     if df is not None and not df.empty:
-        last_rsi_valid_index = df["RSI_14"].last_valid_index()
-        start_index = max(0, last_rsi_valid_index - 14)
-        print(f"{last_rsi_valid_index=}")
+        first_rsi_nan_index_label = df["RSI_14"].isnull().idxmax()
+        first_rsi_nan_position = df.index.get_loc(first_rsi_nan_index_label)
+        start_index = max(0, first_rsi_nan_position - 14)
+        print(f"{first_rsi_nan_index_label=}")
+        print(f"{first_rsi_nan_position=}")
         print(f"{start_index=}")
 
     return {
