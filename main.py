@@ -7,6 +7,7 @@ from fastapi import FastAPI
 
 from constants import RSI_PERIOD, S3_BUCKET, S3_FOLDER_DAILY_DATA
 from utils.derived_columns.rsi import add_rsi_column, update_close_rsi_for_ticker
+from utils.draw_charts import draw_save_candlestick_with_rsi
 from utils.import_data import (
     add_fresh_ohlc_to_main_data,
     add_fresh_ohlc_to_ticker_data,
@@ -26,14 +27,16 @@ app = FastAPI()
 @app.get("/")
 async def root() -> dict:
     ticker = "TSLA"
-    res = update_close_rsi_for_ticker(ticker=ticker)
+    # res = update_close_rsi_for_ticker(ticker=ticker)
 
-    # filename = f"{ticker.upper()}.csv"
-    # main_df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
+    filename = f"{ticker.upper()}.csv"
+    main_df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
+    draw_save_candlestick_with_rsi(df=main_df)
+
     # new_data = import_yahoo_fin_daily(ticker=ticker)
     # res = add_fresh_ohlc_to_main_data(main_df=main_df, new_data=new_data)
 
-    print(res)
+    # print(res)
 
     # df = read_daily_ohlc_from_s3(ticker=ticker)
     # df = add_rsi_column(df=df)
