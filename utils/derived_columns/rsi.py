@@ -1,17 +1,10 @@
-import logging
-from logging.config import dictConfig
-from typing import Callable
-
 import numpy as np
 import pandas as pd
 
 from constants import RSI_PERIOD, S3_FOLDER_RSI
 from utils.import_data.misc import add_fresh_ohlc_to_main_data
-from utils.log_config import log_config
+from utils.logging import execute_and_log
 from utils.s3 import read_daily_ohlc_from_s3, read_df_from_s3_csv, write_df_to_s3_csv
-
-dictConfig(log_config)
-app_logger = logging.getLogger("app")
 
 
 def _add_rsi_col_initial_validation(
@@ -96,35 +89,48 @@ def add_rsi_column(
 
 
 def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
+    """
+    Read two dataframes from S3: pure OHLC and OHLC + RSI column.
+    Add fresh OHLC data to the RSI dataframe.
+    Then calculate and add new RSI values.
+    """
     ohlc_df = read_daily_ohlc_from_s3(ticker=ticker)
     if ohlc_df is None:
         raise RuntimeError(f"update_close_rsi_for_ticker: no OHLC DF for {ticker=}")
     filename = f"{ticker.upper()}.csv"
     rsi_df = read_df_from_s3_csv(filename=filename, folder=S3_FOLDER_RSI)
     if rsi_df is None:
-        raise RuntimeError(f"update_close_rsi_for_ticker: no RSI DF for {ticker=}")
+        res = add_rsi_column(df=ohlc_df)
+        execute_and_log(
+            func=write_df_to_s3_csv,
+            params={"df": res, "filename": filename, "folder": S3_FOLDER_RSI},
+        )
+        return res
+
+    # There may be NaN RSI values at the start of the dataframe
+    # that will cause harm if not filtered out.
     rsi_df = rsi_df[rsi_df[f"RSI_{RSI_PERIOD}"].notnull()]
+
+    # Concat the RSI dataframe with fresh OHLC data,
+    # and then determine from which day to add new RSI values.
     res = add_fresh_ohlc_to_main_data(main_df=rsi_df, new_data=ohlc_df)
-    first_rsi_nan_index_label = res["RSI_14"].isnull().idxmax()
-    index_0 = res.index[0]
-    print(f"{first_rsi_nan_index_label=}")
-    print(f"{(first_rsi_nan_index_label==index_0)=}")
+    first_rsi_nan_index_label = res[f"RSI_{RSI_PERIOD}"].isnull().idxmax()
+    if first_rsi_nan_index_label == res.index[0]:
+        # There is no need to add values at the end of the RSI column
+        return res
     first_rsi_nan_position = res.index.get_loc(first_rsi_nan_index_label)
-    print(f"{first_rsi_nan_position=}")
+
+    # Take the end of the dataframe to which we will add recent RSI values
+    # We also need the RSI_PERIOD previous lines to calculate RSI.
     start_index = max(0, first_rsi_nan_position - RSI_PERIOD)  # type: ignore
     filtered_df = res.iloc[start_index:]
-    filtered_df = add_rsi_column(df=filtered_df, col_name="Close")
+    filtered_df = add_rsi_column(df=filtered_df)
+
+    # The end result is a dataframe with new recent RSI values added.
     filtered_df = filtered_df[filtered_df[f"RSI_{RSI_PERIOD}"].notnull()]
-    print(filtered_df)
-    print()
     res = pd.concat([res[res.index < filtered_df.index.min()], filtered_df])  # type: ignore
-    try:
-        s3_write_res = write_df_to_s3_csv(
-            df=res, filename=filename, folder=S3_FOLDER_RSI
-        )
-        log_msg = f"write_df_to_s3_csv {filename} - " + s3_write_res
-        app_logger.info(log_msg)
-    except Exception as e:
-        app_logger.error(e, exc_info=True)
-        raise e
+    execute_and_log(
+        func=write_df_to_s3_csv,
+        params={"df": res, "filename": filename, "folder": S3_FOLDER_RSI},
+    )
     return res
