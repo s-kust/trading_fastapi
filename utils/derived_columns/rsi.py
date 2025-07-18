@@ -107,5 +107,5 @@ def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
     filtered_df = filtered_df[filtered_df[f"RSI_{RSI_PERIOD}"].notnull()]
     print(filtered_df)
     print()
-    res = pd.concat(res[res.index < filtered_df.index.min()], filtered_df)
+    res = pd.concat([res[res.index < filtered_df.index.min()], filtered_df])  # type: ignore
     return res
