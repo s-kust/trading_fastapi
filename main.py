@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from constants import RSI_PERIOD, S3_BUCKET, S3_FOLDER_DAILY_DATA
 from utils.derived_columns import add_rsi_column
 from utils.import_data import (
+    add_fresh_ohlc_to_main_data,
     add_fresh_ohlc_to_ticker_data,
     import_alpha_vantage_daily,
     import_yahoo_fin_daily,
@@ -25,18 +26,24 @@ app = FastAPI()
 @app.get("/")
 async def root() -> dict:
     ticker = "TSLA"
-    df = read_daily_ohlc_from_s3(ticker=ticker)
-    df = add_rsi_column(df=df)
-    try:
-        s3_filename = f"{ticker}.csv"
-        s3_write_res = write_df_to_s3_csv(
-            df=df, filename=s3_filename, folder="daily_OHLC_with_RSI/"
-        )
-        log_msg = f"write_df_to_s3_csv {s3_filename} - " + s3_write_res
-        app_logger.info(log_msg)
-    except Exception as e:
-        app_logger.error(e, exc_info=True)
-        raise e
+    filename = f"{ticker.upper()}.csv"
+    main_df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
+    new_data = import_yahoo_fin_daily(ticker=ticker)
+    res = add_fresh_ohlc_to_main_data(main_df=main_df, new_data=new_data)
+    print(res)
+
+    # df = read_daily_ohlc_from_s3(ticker=ticker)
+    # df = add_rsi_column(df=df)
+    # try:
+    #     s3_filename = f"{ticker}.csv"
+    #     s3_write_res = write_df_to_s3_csv(
+    #         df=df, filename=s3_filename, folder="daily_OHLC_with_RSI/"
+    #     )
+    #     log_msg = f"write_df_to_s3_csv {s3_filename} - " + s3_write_res
+    #     app_logger.info(log_msg)
+    # except Exception as e:
+    #     app_logger.error(e, exc_info=True)
+    #     raise e
 
     # df = add_fresh_ohlc_to_ticker_data(ticker=ticker)
     # df = import_yahoo_fin_daily(ticker=ticker)
@@ -64,6 +71,6 @@ async def root() -> dict:
         "S3_BUCKET": S3_BUCKET,
         "S3_FOLDER_DAILY_DATA": S3_FOLDER_DAILY_DATA,
         # "msg": msg,
-        "df 1st": str(df.index[0]),
-        "df last": str(df.index[-1]),
+        # "df 1st": str(df.index[0]),
+        # "df last": str(df.index[-1]),
     }
