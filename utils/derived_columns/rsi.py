@@ -106,7 +106,9 @@ def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
     rsi_df = rsi_df[rsi_df[f"RSI_{RSI_PERIOD}"].notnull()]
     res = add_fresh_ohlc_to_main_data(main_df=rsi_df, new_data=ohlc_df)
     first_rsi_nan_index_label = res["RSI_14"].isnull().idxmax()
+    index_0 = res.index[0]
     print(f"{first_rsi_nan_index_label=}")
+    print(f"{(first_rsi_nan_index_label==index_0)=}")
     first_rsi_nan_position = res.index.get_loc(first_rsi_nan_index_label)
     print(f"{first_rsi_nan_position=}")
     start_index = max(0, first_rsi_nan_position - RSI_PERIOD)  # type: ignore
