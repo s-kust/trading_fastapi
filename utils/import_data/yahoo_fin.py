@@ -1,5 +1,3 @@
-from functools import partial
-
 import pandas as pd
 import yfinance as yf
 
@@ -28,4 +26,10 @@ def get_ohlc_from_yf(
     return res[["Open", "High", "Low", "Close", "Volume"]]
 
 
-import_yahoo_fin_daily = partial(get_ohlc_from_yf, period="max", interval="1d")
+def import_yahoo_fin_daily(ticker: str) -> pd.DataFrame:
+    """
+    We don't want to have today's data because today's trading day may not be over yet.
+    """
+    res = get_ohlc_from_yf(ticker=ticker, period="max", interval="1d")
+    res = res[res.index < pd.to_datetime("today").date()]
+    return res

@@ -24,8 +24,10 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    ticker = "TSLA"
-    df = add_fresh_ohlc_to_ticker_data(ticker=ticker)
+    ticker = "AMZN"
+    # df = add_fresh_ohlc_to_ticker_data(ticker=ticker)
+    res = import_yahoo_fin_daily(ticker=ticker)
+    print(res)
 
     return {
         "message": f"Hello World RSI, {ticker=}",
