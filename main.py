@@ -33,7 +33,7 @@ async def root() -> dict:
     main_df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
     if main_df is None:
         raise RuntimeError("main_df is None")
-    draw_save_candlestick_with_rsi(df=main_df)
+    draw_save_candlestick_with_rsi(df=main_df, ticker=ticker)
 
     # new_data = import_yahoo_fin_daily(ticker=ticker)
     # res = add_fresh_ohlc_to_main_data(main_df=main_df, new_data=new_data)
