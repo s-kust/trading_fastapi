@@ -3,7 +3,9 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from constants import RSI_PERIOD
+from constants import RSI_PERIOD, S3_FOLDER_RSI
+from utils.import_data.misc import add_fresh_ohlc_to_main_data
+from utils.s3 import read_daily_ohlc_from_s3, read_df_from_s3_csv, write_df_to_s3_csv
 
 
 def _add_rsi_col_initial_validation(
@@ -85,3 +87,17 @@ def add_rsi_column(
     # because it is NaN for simple MA.
     internal_df[f"RSI_{RSI_PERIOD}"] = rsi
     return internal_df
+
+
+def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
+    ohlc_df = read_daily_ohlc_from_s3(ticker=ticker)
+    if ohlc_df is None:
+        raise RuntimeError(f"update_close_rsi_for_ticker: no OHLC DF for {ticker=}")
+    filename = f"{ticker.upper()}.csv"
+    rsi_df = read_df_from_s3_csv(filename=filename, folder=S3_FOLDER_RSI)
+    if rsi_df is None:
+        raise RuntimeError(f"update_close_rsi_for_ticker: no RSI DF for {ticker=}")
+    rsi_df = rsi_df[rsi_df[f"RSI_{RSI_PERIOD}"].notnull()]
+    res = add_fresh_ohlc_to_main_data(main_df=rsi_df, new_data=ohlc_df)
+    print(res)
+    return res

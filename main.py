@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from constants import RSI_PERIOD, S3_BUCKET, S3_FOLDER_DAILY_DATA
-from utils.derived_columns import add_rsi_column
+from utils.derived_columns.rsi import add_rsi_column, update_close_rsi_for_ticker
 from utils.import_data import (
     add_fresh_ohlc_to_main_data,
     add_fresh_ohlc_to_ticker_data,
@@ -26,7 +26,7 @@ app = FastAPI()
 @app.get("/")
 async def root() -> dict:
     ticker = "TSLA"
-    res = add_fresh_ohlc_to_ticker_data(ticker=ticker)
+    res = update_close_rsi_for_ticker(ticker=ticker)
 
     # filename = f"{ticker.upper()}.csv"
     # main_df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
