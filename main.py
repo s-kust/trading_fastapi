@@ -24,27 +24,40 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    ticker = "NFLX"
+    ticker = "TSLA"
+    df = read_daily_ohlc_from_s3(ticker=ticker)
+    df = add_rsi_column(df=df)
+    try:
+        s3_filename = f"{ticker}.csv"
+        s3_write_res = write_df_to_s3_csv(
+            df=df, filename=s3_filename, folder="daily_OHLC_with_RSI/"
+        )
+        log_msg = f"write_df_to_s3_csv {s3_filename} - " + s3_write_res
+        app_logger.info(log_msg)
+    except Exception as e:
+        app_logger.error(e, exc_info=True)
+        raise e
 
     # df = add_fresh_ohlc_to_ticker_data(ticker=ticker)
     # df = import_yahoo_fin_daily(ticker=ticker)
     # print(df)
 
-    filename = f"{ticker.upper()}.csv"
-    df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
-    if df is not None and not df.empty:
-        first_rsi_nan_index_label = df["RSI_14"].isnull().idxmax()
-        first_rsi_nan_position = df.index.get_loc(first_rsi_nan_index_label)
-        start_index = max(0, first_rsi_nan_position - 14)  # type: ignore
-        print(f"{first_rsi_nan_index_label=}")
-        print(f"{first_rsi_nan_position=}")
-        print(f"{start_index=}")
-        filtered_df = df.iloc[start_index:]
-        print(filtered_df)
-        print()
-        filtered_df = add_rsi_column(df=filtered_df, col_name="Close")
-        filtered_df = filtered_df[filtered_df[f"RSI_{RSI_PERIOD}"].notnull()]
-        print(filtered_df)
+    # filename = f"{ticker.upper()}.csv"
+    # df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
+    # if df is not None and not df.empty:
+    #     first_rsi_nan_index_label = df["RSI_14"].isnull().idxmax()
+    #     first_rsi_nan_position = df.index.get_loc(first_rsi_nan_index_label)
+    #     start_index = max(0, first_rsi_nan_position - 14)  # type: ignore
+    #     print(f"{first_rsi_nan_index_label=}")
+    #     print(f"{first_rsi_nan_position=}")
+    #     print(f"{start_index=}")
+
+    #     # filtered_df = df.iloc[start_index:]
+    #     # print(filtered_df)
+    #     # print()
+    #     # filtered_df = add_rsi_column(df=filtered_df, col_name="Close")
+    #     # filtered_df = filtered_df[filtered_df[f"RSI_{RSI_PERIOD}"].notnull()]
+    #     # print(filtered_df)
 
     return {
         "message": f"Hello World RSI, {ticker=}",

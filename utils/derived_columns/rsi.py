@@ -37,7 +37,7 @@ def _calculate_ma(
 
 
 def add_rsi_column(
-    df: pd.DataFrame, col_name: str, ma_type: str = "simple"
+    df: pd.DataFrame, col_name: str = "Close", ma_type: str = "simple"
 ) -> pd.DataFrame:
     """
     Adds the Relative Strength Index (RSI) column to a DataFrame.
