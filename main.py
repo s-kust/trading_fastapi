@@ -39,7 +39,11 @@ async def root() -> dict:
         print(f"{first_rsi_nan_index_label=}")
         print(f"{first_rsi_nan_position=}")
         print(f"{start_index=}")
-        print(df.iloc[start_index:])
+        filtered_df = df.iloc[start_index:]
+        print(filtered_df)
+        print()
+        filtered_df = add_rsi_column(df=filtered_df, col_name="Close")
+        print(filtered_df)
 
     return {
         "message": f"Hello World RSI, {ticker=}",
