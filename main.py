@@ -32,7 +32,7 @@ async def root() -> dict:
     # main_df = read_df_from_s3_csv(filename=filename, folder="daily_OHLC_with_RSI/")
     # new_data = import_yahoo_fin_daily(ticker=ticker)
     # res = add_fresh_ohlc_to_main_data(main_df=main_df, new_data=new_data)
-    print(res)
+    # print(res)
 
     # df = read_daily_ohlc_from_s3(ticker=ticker)
     # df = add_rsi_column(df=df)
