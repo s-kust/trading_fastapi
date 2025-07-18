@@ -1,2 +1,3 @@
 from .alpha_vantage import import_alpha_vantage_daily
+from .misc import add_fresh_ohlc_to_main_data, add_fresh_ohlc_to_ticker_data
 from .yahoo_fin import get_ohlc_from_yf, import_yahoo_fin_daily
