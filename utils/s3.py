@@ -148,17 +148,6 @@ def read_df_from_s3_csv(
         res.index = res.index.normalize()
         res.index = res.index.date  # type: ignore
         res = res.sort_index()
-        # res.index = res.index.tz_localize(None)
-        # res.index = res.index.tz_convert(None)
-        # res.index = pd.DatetimeIndex(res.index)
-
-        print(f"{type(res.index)=}")
-        print(f"{type(res.index[0])=}")
-        print(f"{res.index[0]=}")
-        # print("res")
-        print(res)
-        print()
-
         return res
     else:
         raise RuntimeError(
