@@ -5,7 +5,7 @@ import yfinance as yf
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from constants import S3_BUCKET, S3_FOLDER_DAILY_DATA
+from constants import RSI_PERIOD, S3_BUCKET, S3_FOLDER_DAILY_DATA
 from utils.derived_columns import add_rsi_column
 from utils.import_data import (
     add_fresh_ohlc_to_ticker_data,
@@ -43,6 +43,7 @@ async def root() -> dict:
         print(filtered_df)
         print()
         filtered_df = add_rsi_column(df=filtered_df, col_name="Close")
+        filtered_df = filtered_df[filtered_df[f"RSI_{RSI_PERIOD}"].notnull()]
         print(filtered_df)
 
     return {
