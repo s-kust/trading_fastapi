@@ -27,7 +27,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root() -> dict:
-    ticker = "COPX"
+    ticker = "TSLA"
     update_ohlc_rsi_chart(ticker=ticker)
 
     # res = update_close_rsi_for_ticker(ticker=ticker)
