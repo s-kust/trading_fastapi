@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):  # type: ignore
         year="*",
         month="*",
         day="*",
-        day_of_week="mon-fri",
+        day_of_week="mon-sun",
         hour="5",
         minute="0",
         second="0",
