@@ -20,7 +20,7 @@ def add_fresh_ohlc_to_main_data(
     # logger.info(f"{type(new_data.index)=}")
 
     if not main_df.empty:
-        index_date_threshold = main_df.index.max().date()
+        index_date_threshold = main_df.index.max()
         logger.info(f"{type(index_date_threshold)=}")
         logger.info(f"{index_date_threshold=}")
         logger.info(f"{type(new_data.index)=}")
