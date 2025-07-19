@@ -18,7 +18,7 @@ def add_fresh_ohlc_to_main_data(
     # logger.info(f"{type(new_data.index)=}")
 
     if not main_df.empty:
-        index_date_threshold = pd.Timestamp(main_df.index.max())
+        index_date_threshold = main_df.index.max()
         res = pd.concat([main_df, new_data[new_data.index > index_date_threshold]])
     else:
         res = pd.concat([main_df, new_data])
