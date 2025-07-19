@@ -8,17 +8,19 @@ from utils.s3 import read_daily_ohlc_from_s3, write_df_to_s3_csv
 def add_fresh_ohlc_to_main_data(
     main_df: pd.DataFrame, new_data: pd.DataFrame
 ) -> pd.DataFrame:
-    logger = get_app_logger()
-    logger.info("main_df")
-    logger.info(main_df)
-    logger.info(f"{type(main_df.index)=}")
-    # print()
-    logger.info("new_data")
-    logger.info(new_data)
-    logger.info(f"{type(new_data.index)=}")
-    # print()
+    # logger = get_app_logger()
+    # logger.info("main_df")
+    # logger.info(main_df)
+    # logger.info(f"{type(main_df.index)=}")
+
+    # logger.info("new_data")
+    # logger.info(new_data)
+    # logger.info(f"{type(new_data.index)=}")
+
     if not main_df.empty:
-        res = pd.concat([main_df, new_data[new_data.index > main_df.index.max()]])
+        res = pd.concat(
+            [main_df, new_data[new_data.index > pd.Timestamp(main_df.index.max())]]
+        )
     else:
         res = pd.concat([main_df, new_data])
     res.index = pd.to_datetime(res.index)
