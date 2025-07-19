@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 
 from utils.import_data.yahoo_fin import import_yahoo_fin_daily
@@ -18,7 +20,7 @@ def add_fresh_ohlc_to_main_data(
     # logger.info(f"{type(new_data.index)=}")
 
     if not main_df.empty:
-        index_date_threshold = main_df.index.max()
+        index_date_threshold = datetime.date(main_df.index.max())
         logger.info(f"{type(index_date_threshold)=}")
         logger.info(f"{index_date_threshold=}")
         logger.info(f"{type(new_data.index[-1])=}")
