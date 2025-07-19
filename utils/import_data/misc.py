@@ -19,7 +19,7 @@ def add_fresh_ohlc_to_main_data(
 
     if not main_df.empty:
         res = pd.concat(
-            [main_df, new_data[new_data.index > pd.Timestamp(main_df.index.max())]]
+            [main_df, new_data[new_data.index > pd.to_datetime(main_df.index.max())]]
         )
     else:
         res = pd.concat([main_df, new_data])
