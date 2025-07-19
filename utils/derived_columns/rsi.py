@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 
@@ -88,15 +90,23 @@ def add_rsi_column(
     return internal_df
 
 
-def update_close_rsi_for_ticker(ticker: str) -> pd.DataFrame:
+def update_close_rsi_for_ticker(
+    ticker: str, initial_ohlc_df: Optional[pd.DataFrame]
+) -> pd.DataFrame:
     """
     Read two dataframes from S3: pure OHLC and OHLC + RSI column.
     Add fresh OHLC data to the RSI dataframe.
     Then calculate and add new RSI values.
     """
-    ohlc_df = read_daily_ohlc_from_s3(ticker=ticker)
+    ohlc_df = None
+    if initial_ohlc_df is not None and not initial_ohlc_df.empty:
+        ohlc_df = initial_ohlc_df
+    else:
+        ohlc_df = read_daily_ohlc_from_s3(ticker=ticker)
     if ohlc_df is None:
         raise RuntimeError(f"update_close_rsi_for_ticker: no OHLC DF for {ticker=}")
+
+    # Read OHLC + RSI DF from S3
     filename = f"{ticker.upper()}.csv"
     rsi_df = read_df_from_s3_csv(filename=filename, folder=S3_FOLDER_RSI)
     if rsi_df is None:

@@ -18,6 +18,9 @@ def add_fresh_ohlc_to_main_data(
 
 
 def add_fresh_ohlc_to_ticker_data(ticker: str) -> pd.DataFrame:
+    """
+    Add fresh rows to the OHLC data for ticker and save OHLC DF in S3 bucket.
+    """
     new_data = import_yahoo_fin_daily(ticker=ticker)
     main_df = read_daily_ohlc_from_s3(ticker=ticker)
     if main_df is not None and not main_df.empty:
