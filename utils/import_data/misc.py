@@ -8,7 +8,7 @@ from utils.s3 import read_daily_ohlc_from_s3, write_df_to_s3_csv
 def add_fresh_ohlc_to_main_data(
     main_df: pd.DataFrame, new_data: pd.DataFrame
 ) -> pd.DataFrame:
-    # logger = get_app_logger()
+    logger = get_app_logger()
     # logger.info("main_df")
     # logger.info(main_df)
     # logger.info(f"{type(main_df.index)=}")
@@ -19,6 +19,10 @@ def add_fresh_ohlc_to_main_data(
 
     if not main_df.empty:
         index_date_threshold = main_df.index.max()
+        logger.info(f"{type(index_date_threshold)=}")
+        logger.info(f"{index_date_threshold=}")
+        logger.info(f"{type(new_data.index[-1])=}")
+        logger.info(f"{new_data.index[-1]=}")
         res = pd.concat([main_df, new_data[new_data.index > index_date_threshold]])
     else:
         res = pd.concat([main_df, new_data])
