@@ -1,12 +1,15 @@
 import logging
+from contextlib import asynccontextmanager
 from logging.config import dictConfig
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from fastapi_utilities import repeat_at
 
 from constants import S3_BUCKET, S3_FOLDER_DAILY_DATA
 from utils.e2e import update_ohlc_rsi_chart
+from utils.e2e.jobs import update_ohlc_rsi_charts_for_tickers
 from utils.logging import log_config
 
 dictConfig(log_config)
@@ -14,6 +17,25 @@ app_logger = logging.getLogger("app")
 load_dotenv(".env")
 
 app = FastAPI()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # type: ignore
+    scheduler = AsyncIOScheduler()
+    # Monday to Friday at 05:00
+    trigger = CronTrigger(
+        year="*",
+        month="*",
+        day="*",
+        day_of_week="mon-fri",
+        hour="5",
+        minute="0",
+        second="0",
+    )
+    scheduler.add_job(update_ohlc_rsi_charts_for_tickers, trigger)
+    scheduler.start()
+    yield
+    scheduler.shutdown()
 
 
 @app.get("/")
@@ -26,15 +48,3 @@ async def root() -> dict:
         "S3_BUCKET": S3_BUCKET,
         "S3_FOLDER_DAILY_DATA": S3_FOLDER_DAILY_DATA,
     }
-
-
-@app.on_event("startup")
-@repeat_at(cron="0 5 * * 1-5")  # Monday to Friday at 05:00
-async def update_ohlc_rsi_charts_for_tickers() -> None:
-    tickers = ["GLD", "COPX"]
-    for ticker in tickers:
-        log_msg_1 = f"update_ohlc_rsi_charts_for_tickers - {ticker=} - starting"
-        app_logger.info(log_msg_1)
-        update_ohlc_rsi_chart(ticker=ticker)
-        log_msg_2 = f"update_ohlc_rsi_charts_for_tickers - {ticker=} - finished OK"
-        app_logger.info(log_msg_2)
