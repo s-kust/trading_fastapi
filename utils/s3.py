@@ -154,9 +154,9 @@ def read_df_from_s3_csv(
         res.index = res.index.normalize()
         logger.info("After normalize before index.date")
         logger.info(f"{type(res.index)=}")
-        res.index = res.index.date  # type: ignore
-        logger.info("After index.date before res.sort_index()")
-        logger.info(f"{type(res.index)=}")
+        # res.index = res.index.date  # type: ignore
+        # logger.info("After index.date before res.sort_index()")
+        # logger.info(f"{type(res.index)=}")
         res = res.sort_index()
         logger.info("After res.sort_index()")
         logger.info(f"{type(res.index)=}")
