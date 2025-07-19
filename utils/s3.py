@@ -7,7 +7,6 @@ from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
 from constants import S3_BUCKET, S3_FOLDER_DAILY_DATA
-from utils.logging import execute_and_log, get_app_logger
 
 load_dotenv()
 s3_client = boto3.client(service_name="s3")
@@ -148,9 +147,6 @@ def read_df_from_s3_csv(
         res.index = pd.to_datetime(res.index, utc=True)
         res.index = res.index.normalize()
         res.index = res.index.date  # type: ignore
-        # logger.info("After index.date before res.sort_index()")
-        # logger.info(f"{type(res.index)=}")
-
         res = res.sort_index()
         return res
     else:
