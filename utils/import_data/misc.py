@@ -23,6 +23,7 @@ def add_fresh_ohlc_to_main_data(
         index_date_threshold = main_df.index.max().date()
         logger.info(f"{type(index_date_threshold)=}")
         logger.info(f"{index_date_threshold=}")
+        logger.info(f"{type(new_data.index)=}")
         logger.info(f"{type(new_data.index[-1])=}")
         logger.info(f"{new_data.index[-1]=}")
         res = pd.concat([main_df, new_data[new_data.index > index_date_threshold]])
