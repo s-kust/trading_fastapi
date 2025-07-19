@@ -31,7 +31,9 @@ def import_yahoo_fin_daily(ticker: str) -> pd.DataFrame:
     We don't want to have today's data because today's trading day may not be over yet.
     """
     res = get_ohlc_from_yf(ticker=ticker, period="max", interval="1d")
-    res = res[res.index < pd.to_datetime("today").date()]
+    res.index = pd.to_datetime(res.index, utc=True)
+    res.index = res.index.normalize()
     res.index = res.index.date  # type: ignore
     res = res.sort_index()
+    res = res[res.index < pd.to_datetime("today").date()]
     return res
