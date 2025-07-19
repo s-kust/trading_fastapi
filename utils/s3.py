@@ -144,22 +144,15 @@ def read_df_from_s3_csv(
 
     status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
     if status == 200:
-        logger = get_app_logger()
         res = pd.read_csv(response.get("Body"), index_col=0)
-        logger.info("Before pd.to_datetime")
-        logger.info(f"{type(res.index)=}")
         res.index = pd.to_datetime(res.index, utc=True)
-        logger.info("After pd.to_datetime before normalize")
-        logger.info(f"{type(res.index)=}")
         res.index = res.index.normalize()
-        logger.info("After normalize before index.date")
-        logger.info(f"{type(res.index)=}")
+
         # res.index = res.index.date  # type: ignore
         # logger.info("After index.date before res.sort_index()")
         # logger.info(f"{type(res.index)=}")
+
         res = res.sort_index()
-        logger.info("After res.sort_index()")
-        logger.info(f"{type(res.index)=}")
         return res
     else:
         raise RuntimeError(
