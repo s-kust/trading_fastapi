@@ -100,7 +100,7 @@ def update_close_rsi_for_ticker(
     """
     ohlc_df = None
     if initial_ohlc_df is not None and not initial_ohlc_df.empty:
-        ohlc_df = initial_ohlc_df
+        ohlc_df = initial_ohlc_df.copy()
     else:
         ohlc_df = read_daily_ohlc_from_s3(ticker=ticker)
     if ohlc_df is None:
@@ -123,6 +123,7 @@ def update_close_rsi_for_ticker(
 
     # Concat the RSI dataframe with fresh OHLC data,
     # and then determine from which day to add new RSI values.
+    ohlc_df.index = ohlc_df.index.date  # type: ignore
     res = add_fresh_ohlc_to_main_data(main_df=rsi_df, new_data=ohlc_df)
     first_rsi_nan_index_label = res[f"RSI_{RSI_PERIOD}"].isnull().idxmax()
     if first_rsi_nan_index_label == res.index[0]:
