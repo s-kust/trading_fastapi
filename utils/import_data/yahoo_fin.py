@@ -32,4 +32,6 @@ def import_yahoo_fin_daily(ticker: str) -> pd.DataFrame:
     """
     res = get_ohlc_from_yf(ticker=ticker, period="max", interval="1d")
     res = res[res.index < pd.to_datetime("today").date()]
+    res.index = res.index.date  # type: ignore
+    res = res.sort_index()
     return res
