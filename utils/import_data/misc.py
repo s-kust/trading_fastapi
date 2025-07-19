@@ -8,6 +8,14 @@ from utils.s3 import read_daily_ohlc_from_s3, write_df_to_s3_csv
 def add_fresh_ohlc_to_main_data(
     main_df: pd.DataFrame, new_data: pd.DataFrame
 ) -> pd.DataFrame:
+    print("main_df")
+    print(main_df)
+    print(f"{type(main_df.index)=}")
+    print()
+    print("new_data")
+    print(new_data)
+    print(f"{type(new_data.index)=}")
+    print()
     if not main_df.empty:
         res = pd.concat([main_df, new_data[new_data.index > main_df.index.max()]])
     else:
