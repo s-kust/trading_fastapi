@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from logging.config import dictConfig
@@ -42,7 +43,7 @@ async def lifespan(app: FastAPI):  # type: ignore
 async def root() -> dict:
     ticker = "GLD"
     # update_ohlc_rsi_chart(ticker=ticker)
-    update_ohlc_rsi_charts_for_tickers()
+    asyncio.run(update_ohlc_rsi_charts_for_tickers())
 
     return {
         "message": f"Hello World RSI, {ticker=}",
