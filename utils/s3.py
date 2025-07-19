@@ -147,8 +147,7 @@ def read_df_from_s3_csv(
         res = pd.read_csv(response.get("Body"), index_col=0)
         res.index = pd.to_datetime(res.index, utc=True)
         res.index = res.index.normalize()
-
-        # res.index = res.index.date  # type: ignore
+        res.index = res.index.date  # type: ignore
         # logger.info("After index.date before res.sort_index()")
         # logger.info(f"{type(res.index)=}")
 
