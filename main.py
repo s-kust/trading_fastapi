@@ -44,6 +44,8 @@ async def lifespan(app: FastAPI):  # type: ignore
 async def root() -> dict:
     ticker = "GLD"
     # update_ohlc_rsi_chart(ticker=ticker)
+    log_msg = f"Inside root: {ticker=}"
+    app_logger.info(log_msg)
 
     return {
         "message": f"Hello World RSI, {ticker=}",
