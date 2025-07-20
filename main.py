@@ -21,6 +21,7 @@ app = FastAPI()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # type: ignore
+    print("************ LIFESPAN FUNCTION STARTED ************")
     scheduler = AsyncIOScheduler()
     # Monday to Friday at 05:00
     trigger = CronTrigger(
@@ -35,6 +36,7 @@ async def lifespan(app: FastAPI):  # type: ignore
     scheduler.add_job(update_ohlc_rsi_charts_for_tickers, trigger)
     scheduler.start()
     log_msg = "Inside lifespan: " + str(scheduler.get_jobs())
+    print(log_msg)
     app_logger.info(log_msg)
     yield
     scheduler.shutdown()
