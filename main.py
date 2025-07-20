@@ -34,6 +34,8 @@ async def lifespan(app: FastAPI):  # type: ignore
     )
     scheduler.add_job(update_ohlc_rsi_charts_for_tickers, trigger)
     scheduler.start()
+    log_msg = "Inside lifespan: " + str(scheduler.get_jobs())
+    app_logger.info(log_msg)
     yield
     scheduler.shutdown()
 
@@ -41,7 +43,7 @@ async def lifespan(app: FastAPI):  # type: ignore
 @app.get("/")
 async def root() -> dict:
     ticker = "GLD"
-    update_ohlc_rsi_chart(ticker=ticker)
+    # update_ohlc_rsi_chart(ticker=ticker)
 
     return {
         "message": f"Hello World RSI, {ticker=}",
