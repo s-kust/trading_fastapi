@@ -81,7 +81,7 @@ def draw_save_candlestick_with_rsi(df: pd.DataFrame, ticker: str) -> None:
 
     last_date = str(df.index[-1])
     last_rsi_value = df[f"RSI_{RSI_PERIOD}"].iloc[-1]
-    last_rsi_value = int(last_rsi_value)
+    last_rsi_value = round(last_rsi_value, 0)
     fig.update_xaxes(title_text=f"{last_date=}, {last_rsi_value=}", row=3, col=1)
 
     # Add rangebreaks to remove weekends (Saturday and Sunday)
