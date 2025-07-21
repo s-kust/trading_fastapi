@@ -1,5 +1,6 @@
 import logging
 import os
+import socket
 from logging.config import dictConfig
 from typing import Any
 
@@ -25,7 +26,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
-    current_host = request.client.host
+    current_host = socket.gethostbyname(socket.gethostname())
     print(f"{current_host=}")
     return templates.TemplateResponse(
         name="main.html",
