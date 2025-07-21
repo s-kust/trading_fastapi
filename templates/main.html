@@ -7,7 +7,7 @@
     <h2>RSI Charts:</h2>    
     <ul>
         {% for ticker in tickers_to_process %}
-        <li><a href="{{ my_url_for('show_rsi_chart', ticker=ticker) }}">{{ ticker }}</a></li>
+        <li><a href="{{ my_url_for(request, 'show_rsi_chart', ticker=ticker) }}">{{ ticker }}</a></li>
         {% endfor %}
     </ul>
 </body>
