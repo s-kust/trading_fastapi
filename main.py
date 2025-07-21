@@ -36,6 +36,7 @@ async def root(request: Request) -> Any:
 
 @app.get("/rsi/{ticker}", response_class=HTMLResponse)
 async def show_rsi_chart(request: Request, ticker: str) -> Any:
+    ticker = ticker.upper()
     if ticker not in TICKERS_TO_FOLLOW:
         raise HTTPException(
             status_code=422,
@@ -45,11 +46,12 @@ async def show_rsi_chart(request: Request, ticker: str) -> Any:
     print(f"{img_path_filename=}")
     if not os.path.exists(img_path_filename):
         update_ohlc_rsi_chart(ticker=ticker)
+    img_path_inside_static_dir = "/images/" + ticker + "_RSI.png"
     return templates.TemplateResponse(
         name="img_rsi.html",
         context={
             "ticker": ticker,
-            "img_path_filename": img_path_filename,
+            "img_path": img_path_inside_static_dir,
             "request": request,
         },
     )
