@@ -25,18 +25,10 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
-    ticker = "SLV"
-    img_path_filename = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png"
-    if not os.path.exists(img_path_filename):
-        update_ohlc_rsi_chart(ticker=ticker)
-    log_msg = f"Inside root: {ticker=}"
-    app_logger.info(log_msg)
-
     return templates.TemplateResponse(
-        name="img_rsi.html",
+        name="main.html",
         context={
-            "ticker": ticker,
-            "img_path_filename": img_path_filename,
+            "tickers_to_process": TICKERS_TO_FOLLOW,
             "request": request,
         },
     )
