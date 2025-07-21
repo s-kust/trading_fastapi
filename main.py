@@ -31,9 +31,22 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
-    df = read_daily_ohlc_from_s3(ticker="GLD")
-    res = get_last_rsi_value(df=df)
-    print(f"{res=}")
+    ticker = "GLD"
+    df = read_daily_ohlc_from_s3(ticker=ticker)
+    if df is None or df.empty:
+        raise ValueError(f"read_daily_ohlc_from_s3 for {ticker=} failed")
+    next_day_threshold_price, indicator_value, msg = (
+        get_min_price_for_indicator_threshold(
+            df=df,
+            indicator_func=get_last_rsi_value,
+            indicator_threshold=85,
+            n_prices=14,
+            price_column="Close",
+        )
+    )
+    print(f"{next_day_threshold_price=}")
+    print(f"{indicator_value=}")
+    print(f"{msg=}")
 
     return templates.TemplateResponse(
         name="main.html",
