@@ -1,6 +1,8 @@
 import logging
 import os
-import socket
+import urllib
+
+# import socket
 from logging.config import dictConfig
 from typing import Any
 
@@ -20,29 +22,25 @@ load_dotenv(".env")
 
 app = FastAPI()
 
+
+def my_url_for(request: Request, name: str, **path_params: Any) -> str:
+    url = request.url_for(name, **path_params)
+    parsed = list(urllib.parse.urlparse(url))
+    # parsed[0] = 'https'  # Change the scheme to 'https' (Optional)
+    parsed[1] = "my_domain.com"  # Change the domain name
+    return urllib.parse.urlunparse(parsed)
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
-
-
-def get_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(0)
-    try:
-        # doesn't even have to be reachable
-        s.connect(("10.254.254.254", 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = "127.0.0.1"
-    finally:
-        s.close()
-    return IP
+templates.env.globals["my_url_for"] = my_url_for
 
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
-    current_host = get_ip()
-    print(f"{current_host=}")
-    print(f"{type(current_host)=}")
+    # current_host = get_ip()
+    # print(f"{current_host=}")
+    # print(f"{type(current_host)=}")
     return templates.TemplateResponse(
         name="main.html",
         context={
