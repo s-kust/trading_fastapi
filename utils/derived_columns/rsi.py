@@ -40,7 +40,10 @@ def _calculate_ma(
 
 
 def add_rsi_column(
-    df: pd.DataFrame, col_name: str = "Close", ma_type: str = "simple"
+    df: pd.DataFrame,
+    col_name: str = "Close",
+    period: int = RSI_PERIOD,
+    ma_type: str = "simple",
 ) -> pd.DataFrame:
     """
     Adds the Relative Strength Index (RSI) column to a DataFrame.
@@ -55,11 +58,11 @@ def add_rsi_column(
                                   Defaults to 'simple'.
 
     Returns:
-        pd.DataFrame: A new DataFrame with the RSI column added, named 'RSI_{RSI_PERIOD}'.
+        pd.DataFrame: A new DataFrame with the RSI column added, named 'RSI_{period}'.
 
     Raises:
         ValueError: If the input DataFrame is empty, the specified column does not exist,
-                    the `ma_type` is invalid, or `RSI_PERIOD` is less than 2.
+                    the `ma_type` is invalid, or period is less than 2.
     """
     # NOTE inspired by https://stackoverflow.com/a/29400434/3139228
 
@@ -74,20 +77,29 @@ def add_rsi_column(
     # Make the positive gains (up) and negative gains (down) Series
     up, down = delta.clip(lower=0), delta.clip(upper=0).abs()
 
-    roll_up = _calculate_ma(series=up, period=RSI_PERIOD, ma_type=ma_type)
-    roll_down = _calculate_ma(series=down, period=RSI_PERIOD, ma_type=ma_type)
+    roll_up = _calculate_ma(series=up, period=period, ma_type=ma_type)
+    roll_down = _calculate_ma(series=down, period=period, ma_type=ma_type)
     rs = roll_up / roll_down
     rsi = 100.0 - (100.0 / (1.0 + rs))
     # Avoid division-by-zero if `roll_down` is zero
     # This prevents inf and/or nan values.
     rsi[:] = np.select([roll_down == 0, roll_up == 0, True], [100, 0, rsi])
     # check results again
-    valid_rsi = rsi[RSI_PERIOD - 1 :]
+    valid_rsi = rsi[period - 1 :]
     assert ((0 <= valid_rsi) & (valid_rsi <= 100)).all()
     # Note: rsi[:RSI_PERIOD - 1] is excluded from above assertion
     # because it is NaN for simple MA.
-    internal_df[f"RSI_{RSI_PERIOD}"] = rsi
+    internal_df[f"RSI_{period}"] = rsi
     return internal_df
+
+
+def get_last_rsi_value(
+    df: pd.DataFrame,
+    col_name: str = "Close",
+    period: int = RSI_PERIOD,
+) -> float:
+    res_df = add_rsi_column(df=df.tail(period + 1), col_name=col_name, period=period)
+    return res_df[col_name].values[-1]
 
 
 def update_close_rsi_for_ticker(

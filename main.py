@@ -10,8 +10,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from constants import LOCAL_IMG_DIRECTORY, TICKERS_TO_FOLLOW
+from utils.derived_columns import (
+    get_last_rsi_value,
+    get_min_price_for_indicator_threshold,
+)
 from utils.e2e import update_ohlc_rsi_chart
 from utils.logging import log_config
+from utils.s3 import read_daily_ohlc_from_s3
 
 dictConfig(log_config)
 app_logger = logging.getLogger("app")
@@ -26,6 +31,9 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
+    df = read_daily_ohlc_from_s3(ticker="GLD")
+    res = get_last_rsi_value(df=df)
+    print(f"{res=}")
 
     return templates.TemplateResponse(
         name="main.html",
