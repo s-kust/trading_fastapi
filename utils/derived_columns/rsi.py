@@ -100,7 +100,7 @@ def get_last_rsi_value(
 ) -> float:
     res_df = add_rsi_column(df=df.tail(period + 1), col_name=col_name, period=period)
     res = res_df[f"RSI_{RSI_PERIOD}"].iloc[-1]
-    return round(res, 0)
+    return round(float(res), 0)
 
 
 def update_close_rsi_for_ticker(
