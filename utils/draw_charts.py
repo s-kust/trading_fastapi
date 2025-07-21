@@ -99,7 +99,7 @@ def draw_save_candlestick_with_rsi(
         )
     )
     fig.update_xaxes(
-        title_text=f"{last_date=}, {last_rsi_val=}, {next_day_threshold_price=}, {rsi_threshold=}, {calculated_rsi_val=}, {msg=}",
+        title_text=f"{last_date=}, {last_rsi_val=}, </br>{next_day_threshold_price=}, {rsi_threshold=}, </br>{calculated_rsi_val=}, {msg=}",
         row=3,
         col=1,
     )
