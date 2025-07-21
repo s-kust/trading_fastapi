@@ -3,19 +3,13 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from constants import LOCAL_IMG_DIRECTORY, RSI_PERIOD
-from utils.derived_columns import (
-    get_last_rsi_value,
-    get_min_price_for_indicator_threshold,
-)
 
 # NOTE
 # If RuntimeError: Kaleido now requires that chrome/chromium is installed separately,
 # see https://stackoverflow.com/questions/79204447/kaleido-runtimeerror
 
 
-def draw_save_candlestick_with_rsi(
-    df: pd.DataFrame, ticker: str, rsi_threshold: int = 85
-) -> None:
+def draw_save_candlestick_with_rsi(df: pd.DataFrame, ticker: str) -> None:
     # df_last_30_days = df.last("30D").copy()
     df_last = df[df.index >= (df.index.max() - pd.Timedelta(days=90))].copy()
     fig = make_subplots(
@@ -88,18 +82,8 @@ def draw_save_candlestick_with_rsi(
     last_date = str(df.index[-1])
     last_rsi_val = df[f"RSI_{RSI_PERIOD}"].iloc[-1]
     last_rsi_val = round(last_rsi_val, 0)
-
-    next_day_threshold_price, calculated_rsi_val, msg = (
-        get_min_price_for_indicator_threshold(
-            df=df,
-            indicator_func=get_last_rsi_value,
-            indicator_threshold=rsi_threshold,
-            n_prices=14,
-            price_column="Close",
-        )
-    )
     fig.update_xaxes(
-        title_text=f"{last_date=}, {last_rsi_val=}, </br>{next_day_threshold_price=}, {rsi_threshold=}, </br>{calculated_rsi_val=}, {msg=}",
+        title_text=f"{last_date=}, {last_rsi_val=}",
         row=3,
         col=1,
     )
