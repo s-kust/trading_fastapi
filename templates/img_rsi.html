@@ -4,6 +4,6 @@
 </head>
 <body>
     <h1>Ticker: {{ ticker }}</h1>
-    <img src="{{ url_for('static', path=img_path) }}" alt="{{ ticker }} RSI" width="700" height="800" />
+    <img src="/static/images/{{ ticker }}" alt="{{ ticker }} RSI" width="700" height="800" />
 </body>
 </html>
