@@ -5,7 +5,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -55,3 +55,16 @@ async def show_rsi_chart(request: Request, ticker: str) -> Any:
             "request": request,
         },
     )
+
+
+@app.get("/rsi_update/{ticker}", response_class=RedirectResponse)
+async def rsi_update(ticker: str) -> Any:
+    ticker = ticker.upper()
+    if ticker not in TICKERS_TO_FOLLOW:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Ticker {ticker.upper()} is not in TICKERS_TO_FOLLOW",
+        )
+    update_ohlc_rsi_chart(ticker=ticker)
+    redirect_url = f"/rsi/{ticker}"
+    return RedirectResponse(redirect_url, status_code=301)
