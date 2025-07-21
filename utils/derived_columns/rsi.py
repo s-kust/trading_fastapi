@@ -99,7 +99,7 @@ def get_last_rsi_value(
     period: int = RSI_PERIOD,
 ) -> float:
     res_df = add_rsi_column(df=df.tail(period + 1), col_name=col_name, period=period)
-    res = df[f"RSI_{RSI_PERIOD}"].iloc[-1]
+    res = res_df[f"RSI_{RSI_PERIOD}"].iloc[-1]
     return round(res, 0)
 
 
