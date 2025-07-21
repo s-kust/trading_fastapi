@@ -4,4 +4,4 @@ RSI_PERIOD = 14
 S3_BUCKET = "sys-trading"
 S3_FOLDER_DAILY_DATA = "daily_tickers_data_csv/"
 S3_FOLDER_RSI = "daily_OHLC_with_RSI/"
-TICKERS_TO_FOLLOW = ["GLC", "COPX"]
+TICKERS_TO_FOLLOW = ["GLD", "COPX"]

@@ -114,5 +114,6 @@ def draw_save_candlestick_with_rsi(df: pd.DataFrame, ticker: str) -> None:
         row=3,
         col=1,
     )
-
-    fig.write_image(LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png")
+    png_path_name = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png"
+    print(f"{png_path_name=}")
+    fig.write_image(png_path_name)

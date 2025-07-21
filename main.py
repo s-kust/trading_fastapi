@@ -42,6 +42,7 @@ async def show_rsi_chart(request: Request, ticker: str) -> Any:
             detail=f"Ticker {ticker.upper()} is not in TICKERS_TO_FOLLOW",
         )
     img_path_filename = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png"
+    print(f"{img_path_filename=}")
     if not os.path.exists(img_path_filename):
         update_ohlc_rsi_chart(ticker=ticker)
     return templates.TemplateResponse(
