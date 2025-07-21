@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from constants import RSI_PERIOD
+from constants import LOCAL_IMG_DIRECTORY, RSI_PERIOD
 
 # NOTE
 # If RuntimeError: Kaleido now requires that chrome/chromium is installed separately,
@@ -115,4 +115,4 @@ def draw_save_candlestick_with_rsi(df: pd.DataFrame, ticker: str) -> None:
         col=1,
     )
 
-    fig.write_image(f"{ticker}_RSI.png")
+    fig.write_image(LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png")

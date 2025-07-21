@@ -1,3 +1,4 @@
+LOCAL_IMG_DIRECTORY = "static/images"
 OHLC_REQUIRED_COLUMNS = {"Volume", "Close", "High", "Low", "Open"}
 RSI_PERIOD = 14
 S3_BUCKET = "sys-trading"
