@@ -86,8 +86,8 @@ def draw_save_candlestick_with_rsi(
     fig.update_xaxes(showticklabels=False, row=2, col=1)
 
     last_date = str(df.index[-1])
-    last_rsi_value = df[f"RSI_{RSI_PERIOD}"].iloc[-1]
-    last_rsi_value = round(last_rsi_value, 0)
+    last_rsi_val = df[f"RSI_{RSI_PERIOD}"].iloc[-1]
+    last_rsi_val = round(last_rsi_val, 0)
 
     next_day_threshold_price, calculated_rsi_val, msg = (
         get_min_price_for_indicator_threshold(
@@ -99,7 +99,7 @@ def draw_save_candlestick_with_rsi(
         )
     )
     fig.update_xaxes(
-        title_text=f"{last_date=}, {last_rsi_value=}, {next_day_threshold_price=}, {rsi_threshold=}, {calculated_rsi_val=}, {msg=}",
+        title_text=f"{last_date=}, {last_rsi_val=}, {next_day_threshold_price=}, {rsi_threshold=}, {calculated_rsi_val=}, {msg=}",
         row=3,
         col=1,
     )
