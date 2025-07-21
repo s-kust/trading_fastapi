@@ -25,7 +25,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
-    ticker = "COPX"
+    ticker = "SLV"
     img_path_filename = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png"
     if not os.path.exists(img_path_filename):
         update_ohlc_rsi_chart(ticker=ticker)
