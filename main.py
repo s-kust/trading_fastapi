@@ -25,6 +25,8 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Any:
+    current_host = request.host_url
+    print(f"{current_host=}")
     return templates.TemplateResponse(
         name="main.html",
         context={
