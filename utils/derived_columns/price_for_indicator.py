@@ -87,12 +87,10 @@ def get_min_price_for_indicator_threshold(
 
         # Determine the index for the new row. If the original DataFrame has a DatetimeIndex,
         # increment the last date. Otherwise, use a simple integer index.
-        if isinstance(df.index, pd.DatetimeIndex) and not df.empty:
+        try:
             new_index = [df.index[-1] + pd.Timedelta(days=1)]
-        else:
-            new_index = (
-                [df.index[-1] + 1] if not df.empty else [0]
-            )  # Handle empty df for index
+        except TypeError:
+            new_index = [df.index[-1] + 1]
 
         new_row_df = pd.DataFrame([new_row_data], index=new_index)
 
