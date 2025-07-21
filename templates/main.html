@@ -1,0 +1,14 @@
+<html>
+<head>
+    <title>Main Page</title>
+</head>
+<body>
+    <h1>Main Page</h1>
+    <h2>RSI Charts:</h2>    
+    <ul>
+        {% for ticker in tickers_to_process %}
+        <li><a href="{{ url_for('show_rsi_chart', ticker=ticker) }}">ticker</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
