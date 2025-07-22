@@ -104,6 +104,7 @@ async def read_form(request: Request) -> Any:
 
 @app.post("/get_min_price_for_rsi_threshold")
 async def submit_data(
+    request: Request,
     ticker: str = Form(...),
     col_name: str = Form("Close"),
     period: int = Form(14),
@@ -143,5 +144,5 @@ async def submit_data(
     output["calculated_rsi_val"] = calculated_rsi_val
     output["msg"] = msg
     return templates.TemplateResponse(
-        "min_price_for_rsi_threshold.html", {"output": output}
+        "min_price_for_rsi_threshold.html", {"request": request, "output": output}
     )
