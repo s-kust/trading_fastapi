@@ -3,11 +3,11 @@
     <title>RSI Chart</title>
 </head>
 <body>
+    <div class="container">
     <h1>Ticker: {{ ticker }}</h1>
     <img src="/static/images/{{ ticker }}_RSI.png" alt="{{ ticker }} RSI" width="700" height="800" />
-    <p style="text-align: center">Next day min price <b>{{ next_day_threshold_price }}</b> for RSI threshold {{ rsi_threshold }}</p>
-    <p style="text-align: center">Calculated RSI value: {{ calculated_rsi_val }}, msg: {{ msg }}</p>
     <p style="text-align: center"><a href="/rsi_update/{{ ticker }}">Update chart</a></p>
     <p style="text-align: center"><a href="/">Return to the main page</a></p>
+    </div>
 </body>
 </html>
