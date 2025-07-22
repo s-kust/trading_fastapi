@@ -4,7 +4,7 @@ from logging.config import dictConfig
 from typing import Any
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -90,3 +90,39 @@ async def rsi_update(ticker: str) -> Any:
     update_ohlc_rsi_chart(ticker=ticker)
     redirect_url = f"/rsi/{ticker}"
     return RedirectResponse(redirect_url, status_code=301)
+
+
+@app.get("/get_last_rsi", response_class=HTMLResponse)
+async def read_form(request: Request) -> Any:
+    """
+    Renders the HTML form, passing the list of available tickers.
+    """
+    return templates.TemplateResponse(
+        "last_rsi_form.html", {"request": request, "tickers": TICKERS_TO_FOLLOW}
+    )
+
+
+@app.post("/get_min_price_for_rsi_threshold")
+async def submit_data(
+    ticker: str = Form(...), col_name: str = Form("Close"), period: int = Form(14)
+) -> Any:
+    """
+    Receives data from the form and prints it.
+    Also, includes a basic validation for the ticker against the available list.
+    """
+    if ticker not in TICKERS_TO_FOLLOW:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Ticker {ticker.upper()} is not in TICKERS_TO_FOLLOW",
+        )
+
+    print(f"Received Ticker: {ticker}")
+    print(f"Received Column Name: {col_name}")
+    print(f"Received Period: {period}")
+
+    return {
+        "message": "Data received successfully!",
+        "ticker": ticker,
+        "col_name": col_name,
+        "period": period,
+    }

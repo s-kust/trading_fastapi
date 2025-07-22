@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Entry Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        select, input[type="text"], input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enter Data</h2>
+        <form action="/get_min_price_for_rsi_threshold" method="post">
+            <label for="ticker">Ticker:</label>
+            <select id="ticker" name="ticker" required>
+                {% for ticker_item in tickers %}
+                <option value="{{ ticker_item }}">{{ ticker_item }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="col_name">Column Name (max 15 chars):</label>
+            <input type="text" id="col_name" name="col_name" value="Close" maxlength="15">
+
+            <label for="period">Period:</label>
+            <input type="number" id="period" name="period" value="14">
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
