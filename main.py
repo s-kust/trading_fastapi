@@ -121,6 +121,7 @@ async def submit_data(
     output["period"] = period
     output["col_name"] = col_name
     output["df_last_index"] = df.index[-1]
+    output["df_last_price"] = df.col_name[-1]
     output["next_day_threshold_price"] = next_day_threshold_price
     output["calculated_rsi_val"] = calculated_rsi_val
     output["msg"] = msg
