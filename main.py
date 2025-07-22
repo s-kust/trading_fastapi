@@ -42,7 +42,6 @@ async def root(request: Request) -> Any:
 
 @app.get("/rsi/{ticker}", response_class=HTMLResponse)
 async def show_rsi_chart(request: Request, ticker: str) -> Any:
-    rsi_threshold = 85
     ticker = ticker.upper()
     if ticker not in TICKERS_TO_FOLLOW:
         raise HTTPException(
@@ -52,28 +51,10 @@ async def show_rsi_chart(request: Request, ticker: str) -> Any:
     img_path_filename = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png"
     if not os.path.exists(img_path_filename):
         update_ohlc_rsi_chart(ticker=ticker)
-    df = read_daily_ohlc_from_s3(ticker=ticker)
-    if df is None or df.empty:
-        raise ValueError(f"read_daily_ohlc_from_s3 for {ticker=} failed")
-    next_day_threshold_price, calculated_rsi_val, msg = (
-        get_min_price_for_indicator_threshold(
-            df=df,
-            indicator_func=get_last_rsi_value,
-            indicator_threshold=rsi_threshold,
-            n_prices=14,
-            price_column="Close",
-        )
-    )
-    next_day_threshold_price = round(float(next_day_threshold_price), 2)
-    calculated_rsi_val = round(float(calculated_rsi_val), 2)
     return templates.TemplateResponse(
         name="img_rsi.html",
         context={
             "ticker": ticker,
-            "next_day_threshold_price": next_day_threshold_price,
-            "rsi_threshold": rsi_threshold,
-            "calculated_rsi_val": calculated_rsi_val,
-            "msg": msg,
             "request": request,
         },
     )
