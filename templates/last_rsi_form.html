@@ -55,14 +55,18 @@
                 {% endfor %}
             </select>
 
-            <label for="col_name">Column Name (max 15 chars):</label>
+            <label for="col_name">Prices Column Name (max 15 chars):</label>
             <input type="text" id="col_name" name="col_name" value="Close" maxlength="15">
 
-            <label for="period">Period:</label>
+            <label for="period">RSI Threshold Value:</label>
+            <input type="number" id="threshold" name="threshold" value="85">
+            
+            <label for="period">RSI Period:</label>
             <input type="number" id="period" name="period" value="14">
 
             <input type="submit" value="Submit">
         </form>
     </div>
+    <div id="res_output">{% block res_output %}{% endblock %}</div>
 </body>
 </html>

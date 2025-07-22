@@ -1,0 +1,11 @@
+{% extends "last_rsi_form.html" %}
+{% block res_output %}
+<p>Ticker: {{ output["ticker"] }}</p>
+<p>Input RSI threshold: {{ output["threshold"] }}</p>
+<p>Input period: {{ output["period"] }}</p>
+<p>Input prices column name: {{ output["col_name"] }}</p>
+<p>DataFrame last day: {{ output["df_last_index"] }}</p>
+<p>Next day threshold price: {{ output["next_day_threshold_price"] }}</p>
+<p>Calculated RSI value: {{ output["calculated_rsi_val"] }}</p>
+<p>Message: {{ output["msg"] }}</p>
+{% endblock %}

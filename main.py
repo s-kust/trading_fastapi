@@ -1,7 +1,7 @@
 import logging
 import os
 from logging.config import dictConfig
-from typing import Any
+from typing import Any, Dict, Union
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Form, HTTPException, Request
@@ -92,7 +92,7 @@ async def rsi_update(ticker: str) -> Any:
     return RedirectResponse(redirect_url, status_code=301)
 
 
-@app.get("/get_last_rsi", response_class=HTMLResponse)
+@app.get("/render_form_last_rsi", response_class=HTMLResponse)
 async def read_form(request: Request) -> Any:
     """
     Renders the HTML form, passing the list of available tickers.
@@ -104,7 +104,10 @@ async def read_form(request: Request) -> Any:
 
 @app.post("/get_min_price_for_rsi_threshold")
 async def submit_data(
-    ticker: str = Form(...), col_name: str = Form("Close"), period: int = Form(14)
+    ticker: str = Form(...),
+    col_name: str = Form("Close"),
+    period: int = Form(14),
+    threshold: int = Form(85),
 ) -> Any:
     """
     Receives data from the form and prints it.
@@ -116,13 +119,29 @@ async def submit_data(
             detail=f"Ticker {ticker.upper()} is not in TICKERS_TO_FOLLOW",
         )
 
-    print(f"Received Ticker: {ticker}")
-    print(f"Received Column Name: {col_name}")
-    print(f"Received Period: {period}")
-
-    return {
-        "message": "Data received successfully!",
-        "ticker": ticker,
-        "col_name": col_name,
-        "period": period,
-    }
+    df = read_daily_ohlc_from_s3(ticker=ticker)
+    if df is None or df.empty:
+        raise ValueError(f"read_daily_ohlc_from_s3 for {ticker=} failed")
+    next_day_threshold_price, calculated_rsi_val, msg = (
+        get_min_price_for_indicator_threshold(
+            df=df,
+            indicator_func=get_last_rsi_value,
+            indicator_threshold=threshold,
+            n_prices=period,
+            price_column=col_name,
+        )
+    )
+    next_day_threshold_price = round(float(next_day_threshold_price), 2)
+    calculated_rsi_val = round(float(calculated_rsi_val), 2)
+    output: Dict[str, Union[str, int, float]] = dict()
+    output["ticker"] = ticker
+    output["threshold"] = threshold
+    output["period"] = period
+    output["col_name"] = col_name
+    output["df_last_index"] = df.index[-1]
+    output["next_day_threshold_price"] = next_day_threshold_price
+    output["calculated_rsi_val"] = calculated_rsi_val
+    output["msg"] = msg
+    return templates.TemplateResponse(
+        "min_price_for_rsi_threshold.html", {"output": output}
+    )
