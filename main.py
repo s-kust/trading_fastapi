@@ -144,5 +144,6 @@ async def submit_data(
     output["calculated_rsi_val"] = calculated_rsi_val
     output["msg"] = msg
     return templates.TemplateResponse(
-        "min_price_for_rsi_threshold.html", {"request": request, "output": output}
+        "min_price_for_rsi_threshold.html",
+        {"request": request, "output": output, "tickers": TICKERS_TO_FOLLOW},
     )
