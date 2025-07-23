@@ -6,7 +6,7 @@
     <h1>Ticker: {{ ticker }}</h1>
     <img src="/static/images/{{ ticker }}_RSI.png" alt="{{ ticker }} RSI" width="700" height="800" />
     {% if rsi_guide_img_path is not none %} 
-        <img src={{ rsi_guide_img_path }} />
+        <img src=/{{ rsi_guide_img_path }} />
     {% endif %}
     <p style="text-align: center"><a href="/rsi_update/{{ ticker }}">Update chart</a></p>
     <p style="text-align: center"><a href="/render_form_last_rsi">Get next day's price for RSI value</a></p>
