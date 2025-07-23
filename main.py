@@ -1,7 +1,7 @@
 import logging
 import os
 from logging.config import dictConfig
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Form, HTTPException, Request
@@ -51,10 +51,14 @@ async def show_rsi_chart(request: Request, ticker: str) -> Any:
     img_path_filename = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI.png"
     if not os.path.exists(img_path_filename):
         update_ohlc_rsi_chart(ticker=ticker)
+    rsi_guide_img_path: Optional[str] = LOCAL_IMG_DIRECTORY + f"{ticker}_RSI_guide.PNG"
+    if not os.path.exists(rsi_guide_img_path):  # type: ignore
+        rsi_guide_img_path = None
     return templates.TemplateResponse(
         name="img_rsi.html",
         context={
             "ticker": ticker,
+            "rsi_guide_img_path": rsi_guide_img_path,
             "request": request,
         },
     )
