@@ -62,15 +62,16 @@ async def show_rsi_chart(request: Request, ticker: str) -> Any:
 
 @app.get("/rsi_update/{ticker}", response_class=RedirectResponse)
 async def rsi_update(ticker: str) -> Any:
+    app_logger.info("Inside rsi_update - 1")
     ticker = ticker.upper()
     if ticker not in TICKERS_TO_FOLLOW:
         raise HTTPException(
             status_code=422,
             detail=f"Ticker {ticker.upper()} is not in TICKERS_TO_FOLLOW",
         )
-    app_logger.info("Inside rsi_update - 1")
-    update_ohlc_rsi_chart(ticker=ticker)
     app_logger.info("Inside rsi_update - 2")
+    update_ohlc_rsi_chart(ticker=ticker)
+    app_logger.info("Inside rsi_update - 3")
     redirect_url = f"/rsi/{ticker}"
     return RedirectResponse(redirect_url, status_code=301)
 
