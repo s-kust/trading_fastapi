@@ -68,9 +68,9 @@ async def rsi_update(ticker: str) -> Any:
             status_code=422,
             detail=f"Ticker {ticker.upper()} is not in TICKERS_TO_FOLLOW",
         )
-    print("Inside rsi_update - 1")
+    app_logger.info("Inside rsi_update - 1")
     update_ohlc_rsi_chart(ticker=ticker)
-    print("Inside rsi_update - 2")
+    app_logger.info("Inside rsi_update - 2")
     redirect_url = f"/rsi/{ticker}"
     return RedirectResponse(redirect_url, status_code=301)
 
