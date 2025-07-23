@@ -73,7 +73,12 @@ async def rsi_update(ticker: str) -> Any:
     update_ohlc_rsi_chart(ticker=ticker)
     app_logger.info("Inside rsi_update - 3")
     redirect_url = f"/rsi/{ticker}"
-    return RedirectResponse(redirect_url, status_code=301)
+    custom_headers = {
+        "Cache-Control": "no-cache, no-store, must-revalidate",  # Instructs not to cache
+        "Pragma": "no-cache",  # For HTTP/1.0 compatibility
+        "Expires": "0",  # Ensures immediate expiration
+    }
+    return RedirectResponse(redirect_url, status_code=302, headers=custom_headers)
 
 
 @app.get("/render_form_last_rsi", response_class=HTMLResponse)
